@@ -38,14 +38,17 @@ _start:
 .option pop
 
 	// Continue primary hart
+	// just run hart0
 	csrr a0, mhartid
 	li   a1, PRIM_HART
 	bne  a0, a1, secondary
 
 	// Primary hart
+	// set sp _stack_top defined in .lds files
 	la sp, _stack_top
 
 	// Load data section
+	// load data from ROM to RAM
 	la a0, _data_lma
 	la a1, _data
 	la a2, _edata

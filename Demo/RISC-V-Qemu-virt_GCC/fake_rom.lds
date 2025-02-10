@@ -8,6 +8,8 @@ MEMORY
 	ram (wxa) : ORIGIN = 0x80080000, LENGTH = 512K
 }
 
+/* >ram AT>rom → .data.align 运行时在 RAM，但初始值在 ROM */
+
 SECTIONS
 {
 	.init :

@@ -7,6 +7,14 @@ BUILD_DIR       = build
 RTOS_SOURCE_DIR = $(abspath ../../Source)
 DEMO_SOURCE_DIR = $(abspath ../Common/Minimal)
 
+ifeq ($(RV32), 1)
+    MARCH = rv32imafdc
+	MABI = ilp32d
+else
+    MARCH = rv64imafdc
+	MABI = lp64d
+endif
+
 CPPFLAGS = \
 	-D__riscv_float_abi_soft \
 	-DportasmHANDLE_INTERRUPT=handle_trap \
@@ -14,20 +22,20 @@ CPPFLAGS = \
 	-I $(RTOS_SOURCE_DIR)/include \
 	-I $(RTOS_SOURCE_DIR)/portable/GCC/RISC-V \
 	-I $(RTOS_SOURCE_DIR)/portable/GCC/RISC-V/chip_specific_extensions/RV32I_CLINT_no_extensions
-CFLAGS  = -march=rv64imafdc -mabi=lp64d -mcmodel=medany \
+CFLAGS  = -march=$(MARCH) -mabi=$(MABI) -mcmodel=medany \
 	-Wall \
 	-fmessage-length=0 \
 	-ffunction-sections \
 	-fdata-sections \
 	-fno-builtin-printf
 LDFLAGS = -nostartfiles -Tfake_rom.lds \
-	-march=rv64imafdc -mabi=lp64d -mcmodel=medany \
+	-march=$(MARCH) -mabi=$(MABI) -mcmodel=medany \
 	-Xlinker --gc-sections \
 	-Xlinker --defsym=__stack_size=300 \
 	-Xlinker -Map=RTOSDemo.map
 
 ifeq ($(DEBUG), 1)
-    CFLAGS += -Og -ggdb3
+    CFLAGS += -Og -g3
 else
     CFLAGS += -O2
 endif
